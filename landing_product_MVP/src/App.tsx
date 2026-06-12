@@ -1,37 +1,71 @@
-import ScrollVideo from "./components/ScrollVideo";
+import { useRef, useEffect, useState } from "react";
+import { useScroll, useTransform, motion } from "framer-motion";
 
-function App() {
+export default function App() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const [duration, setDuration] = useState(1);
+
+  // 🔥 Scroll global
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end end"],
+  });
+
+  // 🔥 Mapear scroll → tiempo del video
+  const currentTime = useTransform(scrollYProgress, [0, 1], [0, duration]);
+
+  // 🔥 Sincronizar video con scroll
+  useEffect(() => {
+    const unsubscribe = currentTime.on("change", (t) => {
+      if (videoRef.current) {
+        videoRef.current.currentTime = t;
+      }
+    });
+
+    return () => unsubscribe();
+  }, [currentTime]);
+
   return (
-    <>
-      <ScrollVideo />
+    <div ref={containerRef} style={{ height: "300vh" }}>
 
-      <div id="scroll-container" className="h-[500vh]">
-        <section className="h-screen flex items-center justify-right">
-          <h1 className="text-6xl font-bold text-black">
-            Producto Revolucionario
-          </h1>
-        </section>
+      {/* 🎥 VIDEO CONTROLADO POR SCROLL */}
+      <video
+        ref={videoRef}
+        muted
+        playsInline
+        preload="auto"
+        style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100vh",
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+        onLoadedMetadata={(e) => {
+          setDuration(e.currentTarget.duration);
+        }}
+      >
+        <source src="/video.mp4" type="video/mp4" />
+      </video>
 
-        <section className="h-screen flex items-center justify-right">
-          <h2 className="text-5xl text-gray">
-            Más rápido
-          </h2>
-        </section>
-
-        <section className="h-screen flex items-center justify-right">
-          <h2 className="text-5xl text-gray">
-            Más potente
-          </h2>
-        </section>
-
-        <section className="h-screen flex items-center justify-right">
-          <h2 className="text-5xl text-gray">
-            Más inteligente
-          </h2>
-        </section>
+      {/* 🧠 CONTENIDO */}
+      <div
+        style={{
+          position: "relative",
+          zIndex: 2,
+          color: "gray",
+          paddingTop: "40vh",
+          textAlign: "center",
+        }}
+      >
+        <h1>Scroll controla el video 🔥</h1>
+        <p>Esto ya es nivel Apple</p>
       </div>
-    </>
+
+    </div>
   );
 }
-
-export default App;

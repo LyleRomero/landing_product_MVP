@@ -14,8 +14,7 @@ export default function ScrollSection({ children }: Props) {
     <section
       ref={ref}
       style={{
-        height: "150vh",
-        position: "relative",
+        height: "180vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -25,10 +24,6 @@ export default function ScrollSection({ children }: Props) {
         initial={{ opacity: 0 }}
         animate={{ opacity: isInView ? 1 : 0 }}
         transition={{ duration: 1 }}
-        style={{
-          position: "relative",
-          zIndex: 2,
-        }}
       >
         {children}
       </motion.div>
