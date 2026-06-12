@@ -28,7 +28,7 @@ export default function App() {
   }, [currentTime]);
 
   return (
-    <div ref={containerRef} style={{ height: "300vh" }}>
+    <div ref={containerRef} style={{ height: "2200vh" }}>
 
       {/* 🎥 VIDEO CONTROLADO POR SCROLL */}
       <video
